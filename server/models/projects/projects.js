@@ -1,4 +1,6 @@
 import mongoose from 'mongoose';
+import { ObjectiveModel } from '../objectives/objectives.js';
+import { UserModel } from '../user/users.js';
 
 const {Schema, model} = mongoose;
 
@@ -21,19 +23,50 @@ const projectSchema = new Schema({
   },
   state:{
     type: String,
-    enum: ['Activo','Inactivo'],
-    default: 'Inactivo',
+    enum: ['ACTIVO','INACTIVO'],
+    default: 'INACTIVO',
   },
   phase:{
     type: String,
-    enum: ['Iniciado','Desarrollo','Terminado','Nulo'],
-    default: 'Nulo',
+    enum: ['INICIADO','DESARROLLO','TERMINADO',''],
+    default: '',
   },
   leader: {
     type: String,
     required: true,
+    ref: UserModel,
   },
-  
+  objectives: [
+    {
+      description:{
+        type: String,
+        required: true,
+      },
+      types:{
+        type: String,
+        enum: ['GENERAL','ESPECIFICO'],
+        required: true,
+      }
+    }
+  ],
+},
+{
+  toJSON: { virtuals: true }, // So `res.json()` and other `JSON.stringify()` functions include virtuals
+  toObject: { virtuals: true }, // So `console.log()` and other functions that use `toObject()` include virtuals
+}
+);
+
+
+projectSchema.virtual('avances', {
+  ref: 'Avance',
+  localField: '_id',
+  foreignField: 'proyecto',
+});
+
+projectSchema.virtual('inscripciones', {
+  ref: 'Inscripcion',
+  localField: '_id',
+  foreignField: 'proyecto',
 });
 
 const ProjectModel = model('Proyecto',projectSchema);
