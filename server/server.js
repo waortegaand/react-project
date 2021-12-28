@@ -24,7 +24,7 @@ const getUserData = (token) => {
 const server = new ApolloServer({
   typeDefs : tipos,
   resolvers: resolvers,
-  context  : ({req,res}) => {
+  context  : async({req,res}) => {
     //const token = req.headers?.authorization ?? null;
     // VERIFICAR LAS SIGUIENTES LINEAS DE CODIGO
     const token = req.headers.authorization;

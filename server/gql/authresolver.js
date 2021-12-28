@@ -8,10 +8,10 @@ const resolversAuth = {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(args.password, salt);
       const usuarioCreado = await UserModel.create({
-        nombre: args.nombre,
-        apellido: args.apellido,
-        identificacion: args.identificacion,
-        correo: args.correo,
+        name: args.name,
+        lastname: args.lastname,
+        identification: args.identification,
+        email: args.email,
         rol: args.rol,
         password: hashedPassword,
       });
@@ -19,10 +19,10 @@ const resolversAuth = {
       return {
         token: generateToken({
           _id: usuarioCreado._id,
-          nombre: usuarioCreado.nombre,
-          apellido: usuarioCreado.apellido,
-          identificacion: usuarioCreado.identificacion,
-          correo: usuarioCreado.correo,
+          name: usuarioCreado.name,
+          lastname: usuarioCreado.lastname,
+          identification: usuarioCreado.identification,
+          email: usuarioCreado.email,
           rol: usuarioCreado.rol,
         }),
       };
@@ -34,12 +34,12 @@ const resolversAuth = {
         return {
           token: generateToken({
             _id: usuarioEncontrado._id,
-            nombre: usuarioEncontrado.nombre,
-            apellido: usuarioEncontrado.apellido,
-            identificacion: usuarioEncontrado.identificacion,
-            correo: usuarioEncontrado.correo,
+            name: usuarioEncontrado.name,
+            lastname: usuarioEncontrado.lastname,
+            identification: usuarioEncontrado.identification,
+            email: usuarioEncontrado.email,
             rol: usuarioEncontrado.rol,
-            foto: usuarioEncontrado.foto,
+            photo: usuarioEncontrado.photo,
           }),
         };
       }
@@ -55,12 +55,12 @@ const resolversAuth = {
         return {
           token: generateToken({
             _id: context.userData._id,
-            nombre: context.userData.nombre,
-            apellido: context.userData.apellido,
-            identificacion: context.userData.identificacion,
-            correo: context.userData.correo,
+            name: context.userData.name,
+            lastname: context.userData.lastname,
+            identification: context.userData.identification,
+            email: context.userData.email,
             rol: context.userData.rol,
-            foto: context.userData.foto,
+            photo: context.userData.photo,
           }),
         };
       }
