@@ -1,0 +1,75 @@
+import { UserModel } from './users.js';
+import bcrypt from 'bcrypt';
+import { EnrollmentModel } from '../enrollment/enrollment.js';
+
+const resolversUser = {
+  Usuario: {
+    inscripciones: async (parent, args, context) => {
+      return EnrollmentModel.find({ student: parent._id });
+    },
+  },
+  Query: {
+    Usuarios: async (parent, args, context) => {
+      const usuarios = await UserModel.find({ ...args.filtro });
+      return usuarios;
+    },
+    Usuario: async (parent, args) => {
+      const usuario = await UserModel.findOne({ _id: args._id });
+      return usuario;
+    },
+  },
+  Mutation: {
+    crearUsuario: async (parent, args) => {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(args.password, salt);
+      const usuarioCreado = await UserModel.create({
+        name: args.name,
+        lastname: args.lastname,
+        identification: args.identification,
+        email: args.email,
+        rol: args.rol,
+        password: hashedPassword,
+      });
+
+      if (Object.keys(args).includes('estado')) {
+        usuarioCreado.estado = args.estado;
+      }
+
+      return usuarioCreado;
+    },
+    editarUsuario: async (parent, args) => {
+      const usuarioEditado = await UserModel.findByIdAndUpdate(
+        args._id,
+        {
+          name: args.name,
+          lastname: args.lastname,
+          identification: args.identification,
+          email: args.email,
+          state: args.state,
+        },
+        { new: true }
+      );
+
+      return usuarioEditado;
+    },
+    editarPerfil: async (parent, args) => {
+      const usuarioEditado = await UserModel.findOneAndUpdate(
+        args._id,
+        { ...args.fields },
+        { new: true }
+      );
+      return usuarioEditado;
+    },
+    eliminarUsuario: async (parent, args) => {
+      if (Object.keys(args).includes('_id')) {
+        const usuarioEliminado = await UserModel.findOneAndDelete({ _id: args._id });
+        return usuarioEliminado;
+      } else if (Object.keys(args).includes('correo')) {
+        const usuarioEliminado = await UserModel.findOneAndDelete({ email: args.correo });
+        return usuarioEliminado;
+      }
+    },
+  },
+};
+
+export { resolversUser };
